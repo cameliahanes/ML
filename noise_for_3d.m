@@ -1,10 +1,10 @@
 f = 1300
 N = 100000
-B = 12;
+B = 0.12;
 
 p3d(1,:) = (rand(1, N) .- 1/2) .* 10;
 p3d(2,:) = (rand(1, N) .- 1/2 ) .* 10;
-p3d(3,:) = (rand(1, N) .- 1/2 ) .* 50 .+ 1;
+p3d(3,:) = (rand(1, N)) .* 50 .+ 1;
 
 u = p3d(1,:);
 v = p3d(2,:);
@@ -13,7 +13,7 @@ aux = p3d(3,:);
 u_left = f * (u./aux);
 v_left = f * (v./aux);
 
-baseline_vector = [3;0;0];
+baseline_vector = [B;0;0];
 p3d_right = p3d .- baseline_vector;
 
 u_right_aux = p3d_right(1,:);
@@ -24,15 +24,15 @@ u_right = f * (u_right_aux./aux_right);
 v_right = f * (v_right_aux./aux_right);
 
 noise = randn();
-noise_percent = 0.03;
+sigma = 5.2;
 
-u_left_noisy = u_left .+ noise * noise_percent;
-v_left_noisy = v_left .+ noise * noise_percent;
+u_left_noisy = u_left .+ randn() * sigma;
+v_left_noisy = v_left .+ randn() * sigma;
  
-u_right_noisy = u_right .+ noise * noise_percent;
-v_right_noisy = v_right .+ noise * noise_percent;
+u_right_noisy = u_right .+ randn() * sigma;
+v_right_noisy = v_right .+ randn() * sigma;
  
-disparities = u_right_noisy - u_left_noisy;
+disparities = -u_right_noisy + u_left_noisy;
 
 %calculate 3d points
 
@@ -48,8 +48,14 @@ difference_between_3d = p3d - new_p3d;
 
 %scatter3(p3d(1,:), p3d(2,:), p3d(3,:));
 
+%scatter3(new_p3d(1,:), new_p3d(2,:), new_p3d(3,:));
+
+hold on;
+
+scatter3(p3d(1,:), p3d(2,:), p3d(3,:));
 scatter3(new_p3d(1,:), new_p3d(2,:), new_p3d(3,:));
 
+hold off
 
 disp("The mean : ");
 mean(difference_between_3d(:))
